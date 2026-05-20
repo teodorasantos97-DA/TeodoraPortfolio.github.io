@@ -1,0 +1,652 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>Global Development Credit Risk Dashboard</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="assets/css/main.css" />
+		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+	</head>
+
+	<body class="is-preload">
+		<div id="wrapper" class="fade-in">
+
+			<!-- Header -->
+			<header id="header">
+				<a href="index.html" class="logo">Teodora Portfolio</a>
+			</header>
+
+			<!-- Nav -->
+			<nav id="nav">
+				<ul class="links">
+					<li><a href="index.html">Projects</a></li>
+					<li><a href="generic.html">About me</a></li>
+				</ul>
+				<ul class="icons">
+					<li><a href="https://www.linkedin.com/in/teodora-santos-589369266" class="icon brands alt fa-linkedin"><span class="label">LinkedIn</span></a></li>
+					<li><a href="https://github.com/teodorasantos97-DA" class="icon brands alt fa-github"><span class="label">GitHub</span></a></li>
+				</ul>
+			</nav>
+
+			<!-- Main -->
+			<div id="main">
+				<section class="post">
+					<header class="major">
+						<h1>Global Development Credit Risk Dashboard</h1>
+						<p>Understanding Where World Bank Development Financing Is Concentrated</p>
+					</header>
+
+					<!-- Cover Image -->
+					<div style="text-align: center; margin-bottom: 3rem;">
+						<img src="images/CoverImage.png" alt="Global Development Credit Risk Dashboard Cover"
+							style="max-width: 100%; width: 100%; height: auto; border-radius: 6px;" />
+					</div>
+
+					<h2>1. Why This Project?</h2>
+					<p>
+						The World Bank plays a central role in supporting economic development across the world. One of its key objectives is to 
+						reduce extreme poverty while promoting long-term economic growth in developing countries.
+					</p>
+
+					<p>
+						Within the World Bank Group, two major institutions are responsible for providing financial support to governments:
+					</p>
+
+					<ul>
+						<li>International Bank for Reconstruction and Development (IBRD)</li>
+						<li>International Development Association (IDA)</li>
+					</ul>
+
+					<p>
+						While the IBRD mainly lends to middle-income countries, the International Development Association (IDA) focuses on the 
+						world’s poorest economies by providing concessional financing through loans, grants, and guarantees.
+					</p>
+
+					<p>
+						These financial resources support critical development initiatives such as:
+					</p>
+
+					<ul>
+						<li>Education systems</li>
+						<li>Infrastructure projects</li>
+						<li>Public health programs</li>
+						<li>Disaster recovery efforts</li>
+						<li>Economic development initiatives</li>
+					</ul>
+
+					<p>
+						Because these investments often span several decades, understanding where the financing is allocated and which countries 
+						depend the most on it is essential.
+					</p>
+
+					<p>
+						This project analyzes the IDA credit portfolio to answer two key questions:
+					</p>
+
+					<ul>
+						<li>Where is IDA financial exposure concentrated?</li>
+						<li>Which countries depend the most on IDA financing?</li>
+					</ul>
+
+					<h2>2. Why This Analysis Matters</h2>
+					<p>
+						International development financing involves billions of dollars and long-term commitments between institutions and
+						 governments.
+					</p>
+					<p>
+						Understanding how financing is distributed helps answer important policy and financial questions:
+					</p>
+					<ul>
+						<li>Which countries receive the largest share of development financing?</li>
+						<li>Which countries rely most heavily on IDA programs?</li>
+						<li>Where is the World Bank currently exposed to the highest financial risk?</li>
+					</ul>
+					<p>
+						By analyzing these patterns, we can better understand how global development resources are allocated and how 
+						financial exposure is distributed across countries.
+					</p>
+
+					<h2>3. Dataset Overview</h2>
+					<p>
+						The dataset used in this analysis was obtained from the World Bank's official database and contains historical records
+						 of loans issued through the International Development Association.
+					</p>
+					<p>
+						One important characteristic of this dataset is that it is structured as a monthly snapshot.
+					</p>
+					<p>
+						This means that each row represents the status of a loan at a specific moment in time.
+					</p>
+					<p>
+						As a result:
+					</p>
+					<ul>
+						<li>The same loan can appear multiple times</li>
+						<li>Historical loans may still appear in past snapshots</li>
+						<li>Without proper data preparation, analyses could double count loans</li>
+					</ul>
+					<p>
+						The dataset used in this project was downloaded in March 2026, meaning that future snapshots may slightly change 
+						the results.
+					</p>
+
+					<h2>4. Financing Instruments Included</h2>
+					<p>
+						The dataset includes three types of IDA financing instruments:
+					</p>
+					<ul>
+						<li><strong>Credits</strong> (concessional loans)</li>
+						<li><strong>Grants</strong> (non-repayable funding)</li>
+						<li><strong>Guarantees</strong> (risk-reduction mechanisms)</li>
+					</ul>
+					<p>
+						These financing types can be identified through prefixes in the <strong>Credit Number</strong> field.
+					</p>
+					<p>
+						Because each instrument serves a different purpose, they were treated differently depending on the analysis performed.
+					</p>
+
+					<h2>5. Data Cleaning and Preparation</h2>
+					<p>
+						Due to the snapshot structure of the dataset, data preparation was required before performing the analysis.
+					</p>
+					<p>
+						Since each loan may appear multiple times across reporting periods, the dataset had to be cleaned in order to keep 
+						<strong>only the most recent record for each credit</strong>.
+					</p>
+					<p>
+						This was done using a <strong>SQL window function</strong> with <strong>ROW_NUMBER()</strong>.
+					</p>
+
+					<!-- 1 SQL image -->
+					<div style="text-align: center; margin: 2rem 0;">
+						<img src="images/carbon.png" alt="SQL data cleaning query"
+							style="max-width: 100%; width: 90%; height: auto; border-radius: 6px;" />
+					</div>
+					<p>
+						The query assigns a row number to each record within the same credit based on the snapshot date.
+					</p>
+					<p>
+						The most recent record receives <strong>row number 1</strong>, allowing the dataset to be filtered to retain only the latest 
+						snapshot of each loan.
+					</p>
+					<p>
+						This approach ensured that:
+					</p>
+					<ul>
+						<li>each loan appears only once</li>
+						<li>uplicate historical records are removed</li>
+						<li>the dataset reflects the <strong>current state of the credit portfolio</strong></li>
+					</ul>
+					<p>
+						After cleaning the data in SQL, the final dataset was exported and used for visualization in <strong>Tableau</strong>.
+					</p>
+					<p>
+						SQL was used for <strong>data preparation and aggregation</strong>, while Tableau was used to explore patterns and present the results 
+						visually.
+					</p>
+			
+
+					<h2>6. Global Credit Portfolio Overview</h2>
+					<p>
+						<strong><em>Key Question</em>: Where is IDA financial exposure concentrated?</strong>
+					</p>
+					<p>
+						To answer this question, several key portfolio metrics were analyzed.
+					</p>
+
+					<h3>Total Financing by Country</h3>
+					<p>
+						To measure how much financial support each country received, the analysis focused on the <strong>Disbursed Amount</strong> variable. 
+					</p>
+					<p>
+						This variable represents the actual funds transferred to countries, rather than the total amount originally approved.
+					</p>
+					<p>
+						Although the dataset includes committed loan amounts, not all approved funds are necessarily disbursed.
+					</p>
+					<p>
+						Therefore, using the disbursed amount provides a more accurate representation of the real financial support delivered by IDA.
+					</p>
+
+					<!-- sql image -->
+					<div style="text-align: center; margin: 2rem 0;">
+						<img src="images/carbon2.png" alt="SQL Total Financing by Country"
+							style="max-width: 600px; height: auto; border-radius: 6px;" />
+					</div>
+
+					<p>
+						The results were visualized using Tableau.
+					</p>
+
+					<!-- Tableau  -->
+					 <div style="margin: 2rem 0; text-align:center;">
+
+					<div class='tableauPlaceholder' id='viz_worldbank' style='position: relative'>
+					<noscript>
+					<a href='#'>
+					<img alt='Global IDA Financing Dashboard'
+					src='https://public.tableau.com/static/images/Gl/GlobalIDAFinancingDistribution/Dashboard1/1_rss.png'
+					style='border: none; width: 100%;' />
+					</a>
+					</noscript>
+
+					<object class='tableauViz' style='display:none;'>
+					<param name='host_url' value='https://public.tableau.com/' />
+					<param name='embed_code_version' value='3' />
+					<param name='site_root' value='' />
+					<param name='name' value='GlobalIDAFinancingDistribution/Dashboard1' />
+					<param name='tabs' value='no' />
+					<param name='toolbar' value='yes' />
+					<param name='static_image' value='https://public.tableau.com/static/images/Gl/GlobalIDAFinancingDistribution/Dashboard1/1.png' />
+					<param name='animate_transition' value='yes' />
+					<param name='display_static_image' value='yes' />
+					<param name='display_spinner' value='yes' />
+					<param name='display_overlay' value='yes' />
+					<param name='display_count' value='yes' />
+					</object>
+
+					</div>
+
+					<script type='text/javascript'>
+					var divElement = document.getElementById('viz_worldbank');
+					var vizElement = divElement.getElementsByTagName('object')[0];
+
+					vizElement.style.width = '100%';
+					vizElement.style.height = '850px';
+
+					var scriptElement = document.createElement('script');
+					scriptElement.src = 'https://public.tableau.com/javascripts/api/viz_v1.js';
+					vizElement.parentNode.insertBefore(scriptElement, vizElement);
+					</script>
+
+					</div>
+					
+					
+					<p>
+						The results show that the <strong>top 10 countries account for 51.53% of total IDA financing</strong> across the 133 countries included in the dataset.
+					</p>
+					<p>
+						India ranks as the largest recipient, receiving more than <strong>46 billion USD</strong> in development financing.
+					</p>
+					<p>
+						A large proportion of the top recipients are located in <strong>Sub-Saharan Africa and South Asia</strong>, regions where development financing plays 
+						a critical role in supporting infrastructure, poverty reduction, and economic growth.
+					</p>
+
+					<h3>Number of Credits by Country</h3>
+					<p>
+						To complement the financing analysis, the number of credits issued to each country was also examined.
+					</p>
+					<p>
+						This analysis helps determine whether countries receiving the highest funding also participate in the largest number of development projects.
+					</p>
+
+					<!-- sql image -->
+					<div style="text-align: center; margin: 2rem 0;">
+						<img src="images/carbon4.png" alt="Number of Credits by Country"
+							style="max-width: 650px; height: auto; border-radius: 6px;" />
+					</div>
+					
+					<!-- sql image results -->
+					<div style="text-align: center; margin: 2rem 0;">
+						<img src="images/results.png" alt="Results SQL"
+							style="max-width: 450px; width: 100%; height: auto; border-radius: 6px;" />
+					</div>
+
+					<p>
+						The results reveal that <strong>India received the highest number of credits (442)</strong>, followed by <strong>Bangladesh and Pakistan</strong>.
+
+					</p>
+					<p>
+						This confirms the findings from the previous analysis, where India also appeared as the largest recipient of total financing.
+					</p>
+					<p>
+						These results suggest that certain countries maintain <strong>long-term development partnerships with the World Bank</strong>, participating in 
+						numerous development initiatives over time.
+					</p>
+
+					<h3>Active vs Fully Repaid Loans</h3>
+					<p>
+						To better understand the current structure of the IDA credit portfolio, loans were categorized into three groups:
+					</p>
+					<ul>
+						<li>Active</li>
+						<li>Fully Repaid</li>
+						<li>Cancelled</li>
+					</ul>
+
+					<!-- sql image -->
+					<div style="text-align: center; margin: 2rem 0;">
+						<img src="images/carbon4.png" alt="Number of Credits by Country"
+							style="max-width: 600px; height: auto; border-radius: 6px;" />
+					</div>
+
+					<p>
+						The <strong>Active</strong> category includes loans with the following statuses:
+					</p>
+					<ul>
+						<li>Approved</li>
+						<li>Effective</li>
+						<li>Disbursing</li>
+						<li>Fully Disbursed</li>
+						<li>Repaying</li>
+						<li>Disbursing & Repaying</li>
+					</ul>
+
+					<p>
+						Although these statuses represent different stages of the loan lifecycle, they all indicate that the credit 
+						remains <strong>active within the portfolio</strong>.
+					</p>
+
+					<!-- tableau image -->
+					<div style="text-align: center; margin: 2rem 0;">
+						<img src="images/imageTableau.png" alt="Distribution of IDA Loans by Status"
+							style="max-width: 750px; height: auto; border-radius: 6px;" />
+					</div>
+
+					<p>
+						The results show:
+					</p>
+					<ul>
+						<li><strong>75.64% Active Loans</strong></li>
+						<li><strong>23.16% Fully Repaid</strong></li>
+						<li><strong>1.2% Cancelled</strong></li>
+					</ul>
+					<p>
+						This indicates that the majority of IDA loans are still part of ongoing development financing programs.
+					</p>
+					<p>
+						The very small percentage of cancelled loans also suggests that most approved projects successfully 
+						progress through the full financing cycle.
+					</p>
+
+					<h3>Total Outstanding Debt</h3>
+					<p>
+						To measure the <strong>current financial exposure of the IDA portfolio</strong>, the analysis focused on the total 
+						<strong>outstanding debt</strong>.
+					</p>
+					<p>
+						Outstanding debt represents the portion of loans that has <strong>already been disbursed but has not yet been repaid by the borrowing country</strong>.
+					</p>
+					<p>
+						The variable used for this analysis was "<strong>Due to IDA</strong>", which reflects the remaining balance owed to the International Development Association.
+					</p>
+
+					<!-- sql image -->
+					<div style="text-align: center; margin: 2rem 0;">
+						<img src="images/carbon5.png" alt="Total Outstanding Debt"
+							style="max-width: 600px; height: auto; border-radius: 6px;" />
+					</div>
+
+					<!-- dashboard 2 -->
+					<div style="margin: 2rem 0; text-align:center;">
+
+					<div class='tableauPlaceholder' id='viz_outstanding_debt' style='position: relative'>
+					<noscript>
+					<a href='#'>
+					<img alt='IDA Outstanding Debt Dashboard'
+					src='https://public.tableau.com/static/images/Ou/Outstanding_Debt/Dashboard1/1_rss.png'
+					style='border: none; width: 100%;' />
+					</a>
+					</noscript>
+
+					<object class='tableauViz' style='display:none;'>
+					<param name='host_url' value='https://public.tableau.com/' />
+					<param name='embed_code_version' value='3' />
+					<param name='site_root' value='' />
+					<param name='name' value='Outstanding_Debt/Dashboard1' />
+					<param name='tabs' value='no' />
+					<param name='toolbar' value='yes' />
+					<param name='static_image' value='https://public.tableau.com/static/images/Ou/Outstanding_Debt/Dashboard1/1.png' />
+					<param name='animate_transition' value='yes' />
+					<param name='display_static_image' value='yes' />
+					<param name='display_spinner' value='yes' />
+					<param name='display_overlay' value='yes' />
+					<param name='display_count' value='yes' />
+					</object>
+
+					</div>
+
+					<script type='text/javascript'>
+					var divElement = document.getElementById('viz_outstanding_debt');
+					var vizElement = divElement.getElementsByTagName('object')[0];
+
+					vizElement.style.width = '100%';
+					vizElement.style.height = '850px';
+
+					var scriptElement = document.createElement('script');
+					scriptElement.src = 'https://public.tableau.com/javascripts/api/viz_v1.js';
+					vizElement.parentNode.insertBefore(scriptElement, vizElement);
+					</script>
+
+					</div>
+
+
+					<p>
+						The analysis shows that the countries with the highest outstanding balances are:
+					</p>
+					<ul>
+						<li><strong>Bangladesh</strong></li>
+						<li><strong>Pakistan</strong></li>
+						<li><strong>Nigeria</strong></li>
+					</ul>
+					<p>
+						each with more than <strong>18 billion USD in outstanding obligations</strong>.
+					</p>
+					<p>
+						This indicates that the majority of IDA loans are still part of ongoing 
+						development financing programs.
+					</p>
+
+					<p>
+						The very small percentage of cancelled loans also suggests that most approved projects 
+						successfully progress through the full financing cycle.
+					</p>
+
+					<h2>7. Country Dependency Analysis</h2>
+					<p>
+						<strong><em>Key Question</em>: Which countries depend the most on IDA financing?</strong>
+					</p>
+					<p>
+						To answer this question, the number of <strong>active credits per country</strong> was analyzed.
+					</p>
+					<p>
+						Active credits represent development projects that are still ongoing and have <strong>not yet been fully repaid or cancelled</strong>.
+					</p>
+					<!-- sql image -->
+					<div style="text-align: center; margin: 2rem 0;">
+						<img src="images/carbon7.png" alt="Country Dependency Analysis"
+							style="max-width: 100%; width: 100%; height: auto; border-radius: 6px;" />
+					</div>
+					
+					<!-- Tableau Dasboard -->
+					<div style="margin: 2rem 0; text-align:center;">
+
+					<div class='tableauPlaceholder' id='viz_active_credits' style='position: relative'>
+					<noscript>
+					<a href='#'>
+					<img alt='IDA Active Credits Dashboard'
+					src='https://public.tableau.com/static/images/Cr/Credits_active/Dashboard1/1_rss.png'
+					style='border: none; width: 100%;' />
+					</a>
+					</noscript>
+
+					<object class='tableauViz' style='display:none;'>
+					<param name='host_url' value='https://public.tableau.com/' />
+					<param name='embed_code_version' value='3' />
+					<param name='site_root' value='' />
+					<param name='name' value='Credits_active/Dashboard1' />
+					<param name='tabs' value='no' />
+					<param name='toolbar' value='yes' />
+					<param name='static_image' value='https://public.tableau.com/static/images/Cr/Credits_active/Dashboard1/1.png' />
+					<param name='animate_transition' value='yes' />
+					<param name='display_static_image' value='yes' />
+					<param name='display_spinner' value='yes' />
+					<param name='display_overlay' value='yes' />
+					<param name='display_count' value='yes' />
+					</object>
+
+					</div>
+
+					<script type='text/javascript'>
+					var divElement = document.getElementById('viz_active_credits');
+					var vizElement = divElement.getElementsByTagName('object')[0];
+
+					vizElement.style.width = '100%';
+					vizElement.style.height = '850px';
+
+					var scriptElement = document.createElement('script');
+					scriptElement.src = 'https://public.tableau.com/javascripts/api/viz_v1.js';
+					vizElement.parentNode.insertBefore(scriptElement, vizElement);
+					</script>
+
+					</div>
+
+
+					<p>
+						The results show that <strong>Bangladesh, India, and Pakistan</strong> currently have the highest number of active credits.
+					</p>
+					<p>
+						Countries such as <strong>Kenya, Ethiopia, and Tanzania</strong> also appear among the top recipients, indicating a strong reliance on IDA-supported 
+						development programs.
+					</p>
+					<p>
+						Interestingly, while India historically received the highest financing and the largest number of credits, the outstanding debt analysis revealed 
+						that <strong>Bangladesh and Pakistan currently hold higher remaining balances</strong>.
+					</p>
+					<p>
+						This suggests that many of India's earlier loans have already progressed further into the repayment cycle.
+					</p>
+
+					<h2>8. Impact of COVID-19 on Development Financing</h2>
+					<p>
+						The COVID-19 pandemic created an unprecedented global economic shock, particularly affecting low-income 
+						countries with limited fiscal capacity.
+					</p>
+					<p>
+						In response, the International Development Association (IDA) significantly expanded financial support to help
+						 countries strengthen healthcare systems, stabilize economies, and maintain essential public services.
+					</p>
+					<p>
+						To better understand how development financing evolved during this period, the analysis compares three timeframes:
+					</p>
+
+					<ul>
+						<li>Pre-COVID period (before 2020) </li>
+						<li>COVID period (2020–2021) </li>
+						<li>Post-COVID period (after 2021)</li>
+					</ul>
+
+					<!-- Tableau Dasboard -->
+					<div style="margin: 2rem 0; text-align:center;">
+
+					<div class='tableauPlaceholder' id='viz_worldbank_project' style='position: relative'>
+					<noscript>
+					<a href='#'>
+					<img alt='World Bank Project Dashboard'
+					src='https://public.tableau.com/static/images/Wo/World_Bank_project/Dashboard1/1_rss.png'
+					style='border: none; width: 100%;' />
+					</a>
+					</noscript>
+
+					<object class='tableauViz' style='display:none;'>
+					<param name='host_url' value='https://public.tableau.com/' />
+					<param name='embed_code_version' value='3' />
+					<param name='site_root' value='' />
+					<param name='name' value='World_Bank_project/Dashboard1' />
+					<param name='tabs' value='no' />
+					<param name='toolbar' value='yes' />
+					<param name='static_image' value='https://public.tableau.com/static/images/Wo/World_Bank_project/Dashboard1/1.png' />
+					<param name='animate_transition' value='yes' />
+					<param name='display_static_image' value='yes' />
+					<param name='display_spinner' value='yes' />
+					<param name='display_overlay' value='yes' />
+					<param name='display_count' value='yes' />
+					</object>
+
+					</div>
+
+					<script type='text/javascript'>
+					var divElement = document.getElementById('viz_worldbank_project');
+					var vizElement = divElement.getElementsByTagName('object')[0];
+
+					vizElement.style.width = '100%';
+					vizElement.style.height = '850px';
+
+					var scriptElement = document.createElement('script');
+					scriptElement.src = 'https://public.tableau.com/javascripts/api/viz_v1.js';
+					vizElement.parentNode.insertBefore(scriptElement, vizElement);
+					</script>
+
+					</div>
+
+
+					<p>
+						The results show a <strong>significant increase in financing during the COVID period</strong>.
+					</p>
+					<p>
+						Average annual financing rose substantially compared to the pre-COVID years, reflecting the World Bank's effort to 
+						support vulnerable economies during the crisis.
+					</p>
+					<p>
+						Both <strong>credits and grants increased</strong>, although grants became particularly important as many low-income countries 
+						faced severe fiscal constraints.
+					</p>
+					<p>
+						The geographic distribution of financing during COVID also shows strong concentration in <strong>Sub-Saharan Africa and South Asia</strong>, 
+						regions particularly vulnerable to the economic and public health impacts of the pandemic.
+					</p>
+					<p>Following the crisis, financing levels declined but remained above pre-COVID levels, suggesting that development financing continues to play
+						 an important role in economic recovery.</p>
+
+					<h2>9. Key Insights</h2>
+					<p>
+						Several important insights emerge from this analysis:
+					</p>
+					<ul>
+						<li>IDA financing is highly concentrated, with the <strong>top 10 countries receiving more than 51% of total funding</strong>.</li>
+						<li>Countries such as <strong>India, Bangladesh, and Pakistan</strong> consistently appear among the largest recipients of development financing.</li>
+						<li>More than <strong>75% of the loan portfolio remains active</strong>, highlighting the long-term nature of development financing programs.</li>
+						<li>Although India historically received the highest amount of funding, <strong>Bangladesh and Pakistan currently represent higher outstanding financial exposure</strong>.</li>
+						<li>Development financing increased significantly during the <strong>COVID-19 crisis</strong>, demonstrating the role of international institutions in stabilizing vulnerable economies.</li>
+					</ul>
+
+					<h2>10. Conclusion</h2>
+					<p>
+						IDA financing plays a crucial role in supporting long-term development initiatives in low-income countries.
+					</p>
+					<p>
+						This analysis shows that development financing is concentrated among a relatively small group of countries that maintain long-standing partnerships with the World Bank.
+					</p>
+					<p>
+						By examining financing distribution, outstanding debt, and the number of active projects, it becomes possible to understand where the <strong>current financial exposure of the IDA 
+						portfolio is concentrated.</strong>
+					</p>
+					<p>
+						The analysis also demonstrates how development financing mechanisms can rapidly scale during global crises, helping countries maintain essential services and support economic 
+						recovery.
+					</p>
+					<p>
+						Understanding these patterns helps illustrate how international development financing contributes to <strong>infrastructure development, economic growth, and poverty reduction across the world</strong>.
+					</p>
+				</section>
+			</div>
+
+			<!-- Copyright -->
+			<div id="copyright">
+				<ul><li>&copy; Teodora</li><li>Design: <a href="https://html5up.net">HTML5 UP</a></li></ul>
+			</div>
+
+		</div>
+
+		<!-- Scripts -->
+		<script src="assets/js/jquery.min.js"></script>
+		<script src="assets/js/jquery.scrollex.min.js"></script>
+		<script src="assets/js/jquery.scrolly.min.js"></script>
+		<script src="assets/js/browser.min.js"></script>
+		<script src="assets/js/breakpoints.min.js"></script>
+		<script src="assets/js/util.js"></script>
+		<script src="assets/js/main.js"></script>
+	</body>
+</html>
